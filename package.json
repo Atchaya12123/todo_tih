@@ -1,0 +1,17 @@
+{
+  "name": "todo_tih",
+  "version": "1.0.0",
+  "description": "TIH_todo",
+  "main": "src/app.js",
+  "scripts": {
+    "atchu": "npx nodemon src/app.js",
+    "start": "node src/app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}
