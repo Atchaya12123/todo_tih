@@ -6,7 +6,9 @@ const express = require('express');
 const router = express.Router()
 
 router.post('/signup', async (req, res) => {
-    const { username, password } = req.body;
+  
+    const { username, password, email } = req.body;
+    console.log(password);
   
     try {
       // Check if username already exists
@@ -22,7 +24,8 @@ router.post('/signup', async (req, res) => {
       // Create new user
       const newUser = new User({
         username,
-        password: hashedPassword
+        password: hashedPassword,
+        email
       });
   
       await newUser.save();
@@ -44,19 +47,20 @@ router.post('/signup', async (req, res) => {
 
 
 router.post('/login', async (req, res) => {
-  const { username, password } = req.body;
+  const { password, email } = req.body;
 
   try {
       // Check if user exists
-      const user = await User.findOne({ username });
+      const user = await User.findOne({ email });
       if (!user) {
-          return res.status(400).json({ message: 'Invalid credentials' });
+          return res.status(400).json({ message: 'User not found' });
       }
 
       // Compare passwords
       const isMatch = await bcrypt.compare(password, user.password);
       if (!isMatch) {
-          return res.status(400).json({ message: 'Invalid credentials' });
+        console.log(user)
+          return res.status(400).json({ message: 'Pswd mismatch' });
       }
 
       // Generate JWT token

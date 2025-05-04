@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 mongoose.set('debug', true);
 const PASSWORD = "admin"
-const DATABASE_NAME = 'sample_mflix';
+const DATABASE_NAME = 'TIH';
 const CONNECTION_URI = `mongodb+srv://admin:admin@todotih.4mqs2eb.mongodb.net/`
 async function main() {
     await mongoose.connect(CONNECTION_URI, {
