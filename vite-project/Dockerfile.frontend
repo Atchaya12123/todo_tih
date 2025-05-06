@@ -1,0 +1,17 @@
+FROM node:22-alpine as dev
+
+WORKDIR /app
+
+COPY frontend/package.json ./
+RUN npm install
+
+COPY frontend/ .
+
+RUN npm run build
+
+FROM nginx:alpine as prod
+
+COPY --from=build/app/buils/usr/share/nginx/html
+
+CMD ["nginx","-g","daemon off;"]
+

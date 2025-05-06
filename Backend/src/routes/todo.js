@@ -1,13 +1,15 @@
 const express = require('express')
 const { createTODO,deleteTODO, updateTODO,getAllTODO } = require('../models/todo')
+const  verifyToken  = require( '../Middleware/mid.js');
 
 const router = express.Router()
 
-router.post('/',async(req,res)=>{
+router.post('/', async(req,res)=>{
     console.log(req.body);
-    const {title, description} = req.body
+    const {title, description, uid} = req.body
+ 
     console.log(title);
-    const todo = createTODO(title, description)
+    const todo = createTODO(title, description, uid)
     console.log(todo)
     res.status(201).send(todo)
 })
@@ -34,13 +36,16 @@ router.put('/:id',async(req,res)=>{
 
 // router.get('/todos?page=1&limit=10',async(req,res)=>{
 
-router.get('/allTodos', async (req, res) => {
+router.get('/allTodos',verifyToken, async (req, res) => {
     try {
         console.log("reached");
       const page = parseInt(req.query.page) || 1;
       const limit = parseInt(req.query.limit) || 5;
       const skip = (page - 1) * limit;
-      const { todos, total } = await getAllTODO(limit,skip);
+
+      console.log('whats wrong? '+ req.user.userId)
+
+      const { todos, total } = await getAllTODO(limit,skip, req.user.userId);
       const pgTot = Math.ceil(total / limit);
       res.json({
         total: pgTot,

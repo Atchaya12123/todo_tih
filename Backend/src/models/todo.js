@@ -7,17 +7,28 @@ const todoSchema = new mongoose.Schema({
     description: {
         type: [String],
         required: true
-    }
+    },
+    uid: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
+      }
 }, {timestamps: true});
 
 const TodoM = mongoose.model('Todo', todoSchema);
 
-async function createTODO(title, desciption){
+async function deleteUserTodo(uid){
+    const {deletedCount} = await TodoM.deleteMany({uid});
+    return deletedCount
+}
+
+async function createTODO(title, desciption, uid){
     const todo = await TodoM.create({
         title: title,
-        description: desciption
+        description: desciption,
+        uid: uid
     })
-    console.log("backend: ",todo);
+    console.log("backendCreated: ",todo);
     return todo   
 }
 
@@ -31,10 +42,10 @@ async function updateTODO(id, title, description){
     return todo
 }
 
-async function getAllTODO(limit,skip){
+async function getAllTODO(limit,skip, uid){
     try {
-      const todos = await TodoM.find().skip(skip).limit(limit).sort({ _id: -1 });;
-      const total = await TodoM.countDocuments(); 
+      const todos = await TodoM.find({ uid }).skip(skip).limit(limit).sort({ _id: -1 });;
+      const total = await TodoM.countDocuments({ uid }); 
       
     return {todos, total}
     }
@@ -47,5 +58,6 @@ module.exports = {
     createTODO,
     deleteTODO,
     updateTODO,
-    getAllTODO
+    getAllTODO,
+    deleteUserTodo,
 }

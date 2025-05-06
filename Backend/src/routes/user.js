@@ -1,9 +1,27 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const User = require('../models/user')
+const { deleteUserTodo } = require('../models/todo')
+
 const express = require('express');
 
 const router = express.Router()
+
+router.delete('/account', async (req, res) => {
+  const { uid } = req.body;
+  console.log("somehow its undef",uid);
+  try{
+    const user = await User.deleteOne({_id:uid});
+    console.log(user);
+    const count = await deleteUserTodo(uid);
+    console.log(count);
+    res.status(201).json({ count });
+  
+  }catch(error){
+    console.error(error);
+    res.status(400).json({ message: 'Failed to delete Todos' });
+  }
+});
 
 router.post('/signup', async (req, res) => {
   
@@ -12,9 +30,9 @@ router.post('/signup', async (req, res) => {
   
     try {
       // Check if username already exists
-      const existingUser = await User.findOne({ username });
+      const existingUser = await User.findOne({ email });
       if (existingUser) {
-        return res.status(400).json({ message: 'Username already taken' });
+        return res.status(400).json({ message: 'Email already taken' });
       }
   
       // Hash password
@@ -37,7 +55,7 @@ router.post('/signup', async (req, res) => {
         { expiresIn: '1h' }
       );
   
-      res.status(201).json({ token });
+      res.status(201).json({ token, name: newUser.username });
   
     } catch (error) {
       console.error(error);
@@ -56,6 +74,8 @@ router.post('/login', async (req, res) => {
           return res.status(400).json({ message: 'User not found' });
       }
 
+      console.log(user)
+
       // Compare passwords
       const isMatch = await bcrypt.compare(password, user.password);
       if (!isMatch) {
@@ -70,7 +90,7 @@ router.post('/login', async (req, res) => {
           { expiresIn: '1h' } // Token expires in 1 hour
       );
 
-      res.json({ token });
+      res.json({ token, name: user.username });
   } catch (error) {
       console.error(error);
       res.status(500).json({ message: 'Server error' });

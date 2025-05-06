@@ -25,10 +25,11 @@ export function Signup() {
 
       // Handle response (e.g., redirect user after successful signup)
       if (res.status === 201) {
-        localStorage.setItem('token', token);
+        console.log(res);
+        localStorage.setItem('token', res.data.token);
         alert('Account created successfully');
         console.log(res);
-        navigate('/login');  // Redirect to login page
+        navigate('/');  // Redirect to login page
       }
     } catch (error) {
       console.error('Error creating account:', error);
@@ -43,7 +44,7 @@ export function Signup() {
           <h1 className="text-3xl font-bold text-blue-800 font-mono">Create Account</h1>
         </div>
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+        <form  className="flex flex-col gap-6">
           <div>
             <label className="block mb-1 text-sm font-medium text-blue-600">Full Name</label>
             <input
@@ -51,7 +52,7 @@ export function Signup() {
               value={username}
               onChange={(e) => setFullName(e.target.value)}
               placeholder="Enter your full name"
-              className="w-full px-4 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-400"
+              className="w-full px-4 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-400"
             />
           </div>
 
@@ -62,7 +63,7 @@ export function Signup() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Enter your email"
-              className="w-full px-4 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-400"
+              className="w-full px-4 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-400"
             />
           </div>
 
@@ -74,11 +75,12 @@ export function Signup() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Create a password"
-              className="w-full px-4 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-400"
+              className="w-full px-4 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-400"
             />
           </div>
 
           <button
+            onClick={handleSubmit}
             type="submit"
             className="mt-4 w-full bg-green-500 hover:bg-green-200 hover:text-black text-white py-2 rounded-lg transition duration-200 font-semibold border border-green-800 cursor-pointer"
           >

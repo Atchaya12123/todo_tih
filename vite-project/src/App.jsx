@@ -3,6 +3,9 @@ import { AddModal } from './AddModal.jsx';
 import { AiFillCaretLeft, AiFillCaretRight } from "react-icons/ai";
 import { IoTrashBin } from "react-icons/io5";
 import axios from 'axios';
+import { jwtDecode } from 'jwt-decode';
+import { FaUserCircle } from "react-icons/fa";
+import { useNavigate } from 'react-router-dom';
 
 function App() {
   const [modal, setModal] = useState(0);
@@ -17,6 +20,34 @@ function App() {
   const [id, setId] = useState(null);
   const [msg, setMsg] = useState("");
   const [trigger, setTrigger] = useState(false);
+
+  const token = localStorage.getItem('token');
+    const { username, userId } = jwtDecode(token);
+    const navigate = useNavigate();
+
+  async function handleDeleteAccount(){
+    
+    const confirmDelete = window.confirm('Are you sure you want to delete this Account?');
+    console.log(userId);
+    if (!confirmDelete) return;
+    console.log(userId);
+    try{
+    const res = await axios.delete('http://localhost:3001/user/account',{
+      data: {uid:userId}
+    }); 
+    console.log(res);
+    localStorage.removeItem('token');
+    navigate('/login');
+  } catch(error){
+    alert(error.response?.data?.message || 'Deletion failed');
+  }
+
+  }
+
+  function handleLogout(){
+    localStorage.removeItem('token');
+    navigate('/login');
+   }
 
   async function handleDelete(e, ind) {
     e.preventDefault();
@@ -47,6 +78,9 @@ function App() {
       try {
         const res = await axios.get("http://localhost:3001/todo/allTodos", {
           params: { page, limit },
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
         });
         setMxPg(res.data.total);
         const allDesc = [];
@@ -69,8 +103,13 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-200 via-purple-100 to-blue-100 p-6">
-      <div className="text-4xl text-white bg-blue-800 py-3 rounded-lg text-center shadow-md font-bold tracking-wider">
-        ✨ Todo App
+      <div className="relative flex justify-evenly text-4xl text-white bg-blue-800 py-3 rounded-lg text-center shadow-md font-bold tracking-wider">
+        <h1>✨ Todo App </h1> 
+        <div className='group'>
+        <button className='absolute p-2 top-0 right-0 text-sm cursor-pointer hover:text-purple-200'><FaUserCircle className='inline-block mr-1 mb-1 text-purple-400' />{username}</button>
+        <button onClick={handleLogout} className='absolute mr-2 px-1 mt-6 font-light hover:bg-green-400 hover:text-purple-800 hover:font-semibold top-0 right-0 text-sm rounded cursor-pointer invisible group-hover:visible group-hover:block hover:visible hover:block z-10'> Log out </button>
+        <button onClick={handleDeleteAccount} className='absolute mr-2 px-1 mt-11 font-light hover:bg-red-400 hover:text-red-900 hover:font-semibold top-0 right-0 text-sm rounded cursor-pointer invisible group-hover:visible group-hover:block hover:visible hover:block z-10'> Delete Account </button>
+        </div>
       </div>
 
       <div className="flex justify-between items-center mt-6">
@@ -81,7 +120,7 @@ function App() {
             setId(null);
             setModal(1);
           }}
-          className="bg-gradient-to-r from-red-500 to-red-700 text-white px-6 py-2 rounded-full shadow-md hover:scale-105 transition"
+          className="cursor-pointer bg-gradient-to-r from-green-300 to-green-400 text-green-900 px-6 py-2 rounded-full shadow-md hover:scale-105 transition font-semibold"
         >
           ➕ Add Todo
         </button>
@@ -124,7 +163,7 @@ function App() {
             {heads.map((head, ind) => (
               <tr
                 key={ind}
-                className="hover:bg-blue-100 transition-colors duration-200"
+                className="hover:bg-green-100 transition-colors duration-200"
               >
                 <td className="px-4 py-2 border border-gray-300">{ind + 1}</td>
                 <td

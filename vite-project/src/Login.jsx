@@ -11,7 +11,7 @@ export function Login() {
   // Handle form submission and login logic
   const handleLogin = async () => {
     try {
-      const response = await axios.post('/api/login', {
+      const response = await axios.post('http://localhost:3001/user/login', {
         email,
         password
       });
@@ -19,10 +19,11 @@ export function Login() {
       // Check if login was successful
       if (response.data.token) {
         // Save the JWT token to localStorage
+        console.log(response);
         localStorage.setItem('token', response.data.token);
         
         // Navigate to a protected route (e.g., dashboard or home)
-        navigate('/dashboard');
+        navigate('/');
       }
     } catch (err) {
       // Handle errors (e.g., invalid credentials)
@@ -45,10 +46,10 @@ export function Login() {
             <label className="block mb-1 text-sm font-medium text-blue-500 ">Email</label>
             <input
               type="text"
-              placeholder="Enter your username"
+              placeholder="Enter your email"
               value={email}
               onChange={(e) => setUsername(e.target.value)}
-              className="w-full px-4 py-2 border border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400"
+              className="w-full px-4 py-2 border border-blue-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-green-400"
             />
           </div>
 
@@ -59,7 +60,7 @@ export function Login() {
               placeholder="Enter your password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-2 border border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400"
+              className="w-full px-4 py-2 border border-blue-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-green-400"
             />
           </div>
 

@@ -1,9 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import {jwtDecode} from 'jwt-decode';
 
 export function AddModal({ modal, head, desc , id }) {
   console.log(id);
+  const token = localStorage.getItem('token');
+  const { userId } = jwtDecode(token);
+
   const [heading, setHeading] = useState('');
   const [items, setItems] = useState(['']);
   const inputRefs = useRef([]);
@@ -67,6 +71,7 @@ export function AddModal({ modal, head, desc , id }) {
             res = await axios.post(`http://localhost:3001/todo`, {
             title: heading,
             description: items,
+            uid : userId
           });
     }
       console.log(res.data);
@@ -122,7 +127,7 @@ export function AddModal({ modal, head, desc , id }) {
 
           <button
             type="submit"
-            className="text-xl mx-6 my-6 px-4 py-2 border border-green-900 bg-green-800 text-white rounded"
+            className="text-xl mx-6 my-6 px-4 py-2 border border-green-900 bg-green-800 text-green-100 rounded cursor-pointer hover:bg-green-200 hover:text-purple-900"
           >
             {head ? 'Update Todo' : 'Create Todo'}
           </button>
